@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: 'host'
+    env_file: '.env'
+    # Volumes store your data between container upgrades
+    volumes:
+       - './etc-pihole/:/etc/pihole/'
+       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    #   Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  wireguard:
+    container_name: wireguard
+    image: cmulk/wireguard-docker:buster
+    network_mode: 'host'
+    volumes:
+      - './etc-wireguard:/etc/wireguard'
+    cap_add:
+     - NET_ADMIN
+     - SYS_MODULE
+    restart: unless-stopped
+  
+  cloudflared1:
+    container_name: cloudflared1
+    network_mode: 'host'
+    image: visibilityspots/cloudflared:amd64
+    command: [
+      '/bin/sh', '-c', '/usr/local/bin/cloudflared proxy-dns 
+      --address 127.0.0.1 --port 5053
+      --upstream https://1.1.1.1/.well-known/dns-query --upstream https://1.0.0.1/.well-known/dns-query'
+    ]
+    restart: unless-stopped
+  cloudflared2:
+    container_name: cloudflared2
+    network_mode: 'host'
+    image: visibilityspots/cloudflared:amd64
+    command: [
+      '/bin/sh', '-c', '/usr/local/bin/cloudflared proxy-dns 
+      --address 127.0.0.1 --port 5054
+      --upstream https://1.1.1.1/.well-known/dns-query --upstream https://1.0.0.1/.well-known/dns-query'
+    ]
+    restart: unless-stopped
