@@ -15,7 +15,7 @@ Make sure to have the WireGuard kernel module installed. This is preinstalled in
 1. Clone repo
 2. Install python requirements 
 3. Run initial setup
-4. Add peers to WireGuard (use the *-cli-*.conf to configure client)
+4. Add peers to WireGuard (use the \*-cli-\*.conf to configure client)
 5. Start containers
 
 ```sh
