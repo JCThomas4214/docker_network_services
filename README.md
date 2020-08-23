@@ -1,14 +1,13 @@
-# Docker Network Services
 Pihole, WireGuard, and Cloudflared network services using docker and docker-compose.
 
-## Ingredients
+# Ingredients
 
 - Linux (w/ wireguard kernel module)
 - Python 3.7+ (w/ pip3)
 - Docker 
 - Docker-Compose
 
-## Quick Start Recipe
+# Quick Start Recipe
 
 Make sure to have the WireGuard kernel module installed. This is preinstalled in kernel 5.6+. Visit [here](https://www.wireguard.com/install/) for more info.
 
@@ -26,7 +25,7 @@ pip3 install -r requirements.txt && \
 docker-compose up -d
 ```
 
-## Full Course Meal
+# Full Course Meal
 
 Inital setup and manager for your WireGuard instance
 ```sh
@@ -53,6 +52,39 @@ NOTE: start with './setup.py -i' to stage initial settings
 
 - Make sure to enable IPv4 Forwarding and it persists on reboot.
 - Read the WireGuard [documentation](https://www.wireguard.com/)!
+
+## Initialization
+
+Initialization with `./setup -i` will ask you a series of questions to stage your `.env` file for docker-compose.
+
+- PiHole Web Password
+  - Password used to login into PiHoles webapp
+- Your public IP address
+  - Your outward facing IP address (ISP). This is for Wireguard config files.
+- Host interface name
+  - The name of the NIC used on your server to host services. Used for PiHole packet trafficing.
+- WireGuard interface name
+  - The name of the WireGuard virtual tun interface that will be created.
+- Wireguard interface tunnel IPv4 address
+  - The gateway IP for the WireGuard virtual tun interface.
+- Wireguard interface port
+  - Port used to traffic VPN on Public IP and virtual tun interface
+
+Once all is said and done the `.env` file should be generated and look like the following.
+```sh
+WEBPASSWORD=y0urPa55w0rd
+
+PublicIP=111.111.111.111
+ServerIP=192.168.0.2
+IPv6=False
+TZ=America/Chicago
+DNS1=127.0.0.1#5053
+DNS2=127.0.0.1#5054
+DNSMASQ_USER=pihole
+DNSMASQ_LISTENING=local
+INTERFACE=eth0
+WG_PORT=51820
+```
 
 ## References
 - https://www.wireguard.com/
